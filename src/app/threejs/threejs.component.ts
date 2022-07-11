@@ -27,7 +27,7 @@ export class ThreejsComponent implements OnInit, AfterViewInit {
   private cube: THREE.Mesh = new THREE.Mesh(this.geometry, this.material);
 
   private render !: THREE.WebGLRenderer;
-  private scene!: THREE.Scene;
+  protected scene!: THREE.Scene;
   private controls!: OrbitControls;
 
   constructor() {
@@ -48,7 +48,7 @@ export class ThreejsComponent implements OnInit, AfterViewInit {
     // this.renderScene()
   }
 
-  private animate() {
+  protected animate() {
     requestAnimationFrame(this.animate.bind(this))
 
     this.cube.rotation.x += 0.01
@@ -57,15 +57,18 @@ export class ThreejsComponent implements OnInit, AfterViewInit {
     this.render.render(this.scene, this.camera)
   }
 
-  ngAfterViewInit(): void {
+  public InitThreeJS(){
     this.scene = new THREE.Scene()
     this.camera = new THREE.PerspectiveCamera(75, this.getAspectRatio(), 0.1, 1000)
     this.camera.position.z = 2
     this.render = new THREE.WebGLRenderer({canvas: this.canvas})
     this.render.setSize(this.canvas.clientWidth, this.canvas.clientHeight)
     this.controls = new OrbitControls(this.camera, this.render.domElement)
-    this.scene.add(this.cube)
+  }
 
+  ngAfterViewInit(): void {
+    this.InitThreeJS()
+    this.scene.add(this.cube)
     this.animate()
   }
 }
