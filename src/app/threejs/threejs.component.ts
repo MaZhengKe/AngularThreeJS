@@ -9,14 +9,23 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 })
 export class ThreejsComponent implements OnInit, AfterViewInit {
 
+
   @ViewChild('canvas')
   private canvasRef: ElementRef | undefined
+
+  @ViewChild('DivCanvas')
+  private divCanvasRef: ElementRef | undefined
 
   private camera!: THREE.PerspectiveCamera;
 
   private get canvas(): HTMLCanvasElement {
     return this.canvasRef?.nativeElement;
   }
+  private get divCanvas(): HTMLCanvasElement {
+    return this.divCanvasRef?.nativeElement;
+  }
+
+  public height?:Number;
 
   private loader = new THREE.TextureLoader();
   private geometry = new THREE.BoxGeometry();
@@ -34,17 +43,19 @@ export class ThreejsComponent implements OnInit, AfterViewInit {
   }
 
   private getAspectRatio() {
-    return this.canvas.clientWidth / this.canvas.clientHeight;
+    return this.divCanvas.clientWidth / this.divCanvas.clientHeight;
   }
 
   ngOnInit(): void {
 
   }
 
-  private onWindowResize() {
+  protected onWindowResize() {
     this.camera.aspect = this.getAspectRatio()
     this.camera.updateProjectionMatrix()
-    this.render.setSize(window.innerWidth, window.innerHeight)
+    this.render.setSize(this.divCanvas.clientWidth, this.divCanvas.clientHeight)
+    this.height = this.divCanvas.clientWidth * 0.5625;
+    console.log("onWindowResize " + this.divCanvas.clientWidth + " " + this.divCanvas.clientHeight)
     // this.renderScene()
   }
 
@@ -62,13 +73,16 @@ export class ThreejsComponent implements OnInit, AfterViewInit {
     this.camera = new THREE.PerspectiveCamera(75, this.getAspectRatio(), 0.1, 1000)
     this.camera.position.z = 2
     this.render = new THREE.WebGLRenderer({canvas: this.canvas})
-    this.render.setSize(this.canvas.clientWidth, this.canvas.clientHeight)
+    this.render.setSize(this.divCanvas.clientWidth, this.divCanvas.clientHeight)
     this.controls = new OrbitControls(this.camera, this.render.domElement)
+
+    window.addEventListener('resize', this.onWindowResize.bind(this));
   }
 
   ngAfterViewInit(): void {
     this.InitThreeJS()
     this.scene.add(this.cube)
     this.animate()
+    this.onWindowResize()
   }
 }

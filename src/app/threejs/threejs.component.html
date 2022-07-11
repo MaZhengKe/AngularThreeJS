@@ -1,1 +1,10 @@
-<canvas #canvas id="canvas" style="height: 100%; width: 100%;background-color: #24292e"></canvas>
+<style>
+  #canvas{
+    width: 100%;
+  }
+</style>
+
+<div #DivCanvas id="divTest" style="width: 100%;" [style.height.px]="height">
+  <canvas #canvas id="canvas" >
+  </canvas>
+</div>
